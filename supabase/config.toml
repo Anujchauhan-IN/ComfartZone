@@ -1,0 +1,9 @@
+#:schema https://supabase.com/schemas/config/v1.json
+
+project_id = "comfartzone"
+
+[api]
+enabled = true
+schemas = ["api"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000

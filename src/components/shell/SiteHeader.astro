@@ -4,10 +4,17 @@ import MascotMark from './MascotMark.astro';
 <header class="site-header">
   <div class="site-header__inner">
     <a class="wordmark" href="/" aria-label="ComfartZone home">
-      <span class="wordmark__mascot"><MascotMark class="h-9 w-9 sm:h-10 sm:w-10" /></span>
-      <span>comfartzone<span class="wordmark__dot">.</span></span>
+      <span class="mobile-brand-mark" aria-hidden="true">CZ</span>
+      <span class="wordmark-full">
+        <span class="wordmark__mascot"><MascotMark class="h-9 w-9 sm:h-10 sm:w-10" /></span>
+        <span>comfartzone<span class="wordmark__dot">.</span></span>
+      </span>
     </a>
     <p class="site-header__aside">Anonymous opinions. Consequences may vary.</p>
-    <span class="cz-stamp" aria-label="ComfartZone prototype">CZ</span>
+    <span class="profile-avatar" aria-label="User avatar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true">
+        <circle cx="12" cy="8" r="4"></circle><path d="M4.5 21a7.5 7.5 0 0 1 15 0"></path>
+      </svg>
+    </span>
   </div>
 </header>

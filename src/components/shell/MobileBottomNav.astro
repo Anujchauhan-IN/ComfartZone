@@ -1,12 +1,20 @@
 ---
-import { POST_TYPE_OPTIONS } from '../../lib/feed';
 import NavIcon from './NavIcon.astro';
-const icons = { all: 'home', confession: 'confession', petty_court: 'court', am_i_weird: 'weird', hot_take: 'takes' } as const;
 ---
-<nav class="mobile-bottom-nav lg:hidden" aria-label="Post types">
-  {POST_TYPE_OPTIONS.map((item) => (
-    <a class="mobile-nav-link" data-feed-type={item.value} href={item.value === 'all' ? '/' : '/?type=' + item.value}>
-      <NavIcon name={icons[item.value]} /><span>{item.shortLabel}</span>
-    </a>
-  ))}
+<nav class="mobile-bottom-nav lg:hidden" aria-label="Primary navigation">
+  <a class="mobile-nav-link" data-mobile-nav="home" href="/">
+    <NavIcon name="home" /><span>Home</span>
+  </a>
+  <a class="mobile-nav-link" data-mobile-nav="explore" href="/?sort=popular">
+    <NavIcon name="explore" /><span>Explore</span>
+  </a>
+  <button class="mobile-nav-link mobile-nav-link--post" data-open-composer type="button">
+    <span class="mobile-nav-post-icon"><NavIcon name="post" /></span><span>Post</span>
+  </button>
+  <a class="mobile-nav-link" data-mobile-nav="court" data-feed-type="petty_court" href="/?type=petty_court">
+    <NavIcon name="court" /><span>Court</span>
+  </a>
+  <a class="mobile-nav-link" data-mobile-nav="takes" data-feed-type="hot_take" href="/?type=hot_take">
+    <NavIcon name="takes" /><span>Takes</span>
+  </a>
 </nav>

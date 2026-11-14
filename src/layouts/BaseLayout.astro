@@ -26,15 +26,30 @@ const pageTitle = title === SITE_NAME ? title : `${title} | ${SITE_NAME}`;
     <a class="skip-link" href="#main-content">Skip to content</a>
     <slot />
     <script>
-      const feedTypes = new Set(['all', 'confession', 'petty_court', 'am_i_weird', 'hot_take']);
+      const feedTypes = new Set(['all', 'regular', 'confession', 'petty_court', 'am_i_weird', 'hot_take']);
       const syncFeedNavigation = () => {
         const onFeed = window.location.pathname === '/';
-        const requested = new URLSearchParams(window.location.search).get('type') ?? 'all';
+        const params = new URLSearchParams(window.location.search);
+        const requested = params.get('type') ?? 'all';
         const activeType = onFeed && feedTypes.has(requested) ? requested : '';
+        const mobileDestination = !onFeed
+          ? ''
+          : activeType === 'petty_court'
+            ? 'court'
+            : activeType === 'hot_take'
+              ? 'takes'
+              : params.get('sort') === 'popular'
+                ? 'explore'
+                : 'home';
         document.querySelectorAll<HTMLElement>('[data-feed-type]').forEach((link) => {
           const active = link.dataset.feedType === activeType;
           link.classList.toggle('sidebar-link--active', active && link.classList.contains('sidebar-link'));
-          link.classList.toggle('mobile-nav-link--active', active && link.classList.contains('mobile-nav-link'));
+          if (active && link.classList.contains('sidebar-link')) link.setAttribute('aria-current', 'page');
+          else if (link.classList.contains('sidebar-link')) link.removeAttribute('aria-current');
+        });
+        document.querySelectorAll<HTMLElement>('[data-mobile-nav]').forEach((link) => {
+          const active = link.dataset.mobileNav === mobileDestination;
+          link.classList.toggle('mobile-nav-link--active', active);
           if (active) link.setAttribute('aria-current', 'page');
           else link.removeAttribute('aria-current');
         });
@@ -43,7 +58,15 @@ const pageTitle = title === SITE_NAME ? title : `${title} | ${SITE_NAME}`;
       window.addEventListener('popstate', syncFeedNavigation);
       window.addEventListener('cz:querychange', syncFeedNavigation);
       document.addEventListener('click', (event) => {
-        const target = event.target instanceof Element ? event.target.closest<HTMLAnchorElement>('[data-feed-type]') : null;
+        const element = event.target instanceof Element ? event.target : null;
+        const composerButton = element?.closest<HTMLElement>('[data-open-composer]');
+        if (composerButton) {
+          event.preventDefault();
+          if (window.location.pathname === '/') window.dispatchEvent(new CustomEvent('cz:open-composer', { detail: { trigger: composerButton } }));
+          else window.location.href = '/?compose=1';
+          return;
+        }
+        const target = element?.closest<HTMLAnchorElement>('[data-feed-type], [data-mobile-nav="home"], [data-mobile-nav="explore"]');
         if (!target || window.location.pathname !== '/' || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
         event.preventDefault();
         window.history.pushState({}, '', target.href);

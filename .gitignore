@@ -5,6 +5,10 @@ node_modules/
 dist/
 .astro/
 
+# Supabase CLI local state
+supabase/.temp/
+supabase/.branches/
+
 # environment files
 .env
 .env.*

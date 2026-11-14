@@ -3,7 +3,13 @@ import type { FeedPost, PollChoice, Reaction } from '../../lib/feed';
 import { TYPE_LABELS } from '../../lib/feed';
 
 interface Props { post: FeedPost; detailed?: boolean }
-const reactionLabels: Record<Reaction, string> = { same: 'Same', ouch: 'Ouch', wild: 'Wild' };
+const reactionLabels: Record<Reaction, string> = {
+  funny: 'Funny', love: 'Love', annoying: 'Annoying', same: 'Same', ouch: 'Ouch', wild: 'Wild',
+};
+const reactionsByType = {
+  regular: ['funny', 'love', 'annoying'],
+  confession: ['same', 'ouch', 'wild'],
+} as const satisfies Record<'regular' | 'confession', readonly Reaction[]>;
 
 function roundedPercentages(first: number, second: number): [number, number] {
   const total = first + second;
@@ -44,15 +50,16 @@ export function BinaryVote({ post, detailed = false }: Props) {
   );
 }
 
-export function ConfessionReactions({ post, detailed = false }: Props) {
+export function PostReactions({ post, detailed = false }: Props) {
   const [selected, setSelected] = useState<Reaction | null>(null);
-  if (!post.reactions) return null;
+  if (!post.reactions || (post.type !== 'regular' && post.type !== 'confession')) return null;
+  const reactions = reactionsByType[post.type];
   return (
-    <div className={`reaction-row interaction-block--${post.type} ${detailed ? 'interaction-block--detail' : ''}`} aria-label="Reactions">
-      {(Object.keys(reactionLabels) as Reaction[]).map((reaction) => (
+    <div className={`reaction-row interaction-block--${post.type} ${detailed ? 'interaction-block--detail' : ''}`} aria-label={`${TYPE_LABELS[post.type]} reactions`}>
+      {reactions.map((reaction) => (
         <button className="reaction-button" type="button" aria-pressed={selected === reaction}
           onClick={() => setSelected((current) => current === reaction ? null : reaction)} key={reaction}>
-          {reactionLabels[reaction]} <span className="font-normal">{post.reactions![reaction] + (selected === reaction ? 1 : 0)}</span>
+          {reactionLabels[reaction]} <span className="font-normal">{(post.reactions?.[reaction] ?? 0) + (selected === reaction ? 1 : 0)}</span>
         </button>
       ))}
       <p className="sr-only" aria-live="polite">{selected ? `${reactionLabels[selected]} selected` : 'No reaction selected'}</p>
@@ -61,5 +68,5 @@ export function ConfessionReactions({ post, detailed = false }: Props) {
 }
 
 export default function InteractionControls(props: Props) {
-  return props.post.type === 'confession' ? <ConfessionReactions {...props} /> : <BinaryVote {...props} />;
+  return props.post.type === 'regular' || props.post.type === 'confession' ? <PostReactions {...props} /> : <BinaryVote {...props} />;
 }

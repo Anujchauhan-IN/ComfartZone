@@ -9,10 +9,13 @@ export default function PostCard({ post, detailed = false }: Props) {
     <div className="post-card__meta">
       <span className={`type-badge type-badge--${post.type}`}>{TYPE_LABELS[post.type]}</span>
       {post.topic && <span className="topic-badge">{TOPIC_LABELS[post.topic]}</span>}
+      {post.anonymous && <span className="topic-badge">Anonymous</span>}
+      {post.expiresIn24Hours && <span className="topic-badge">24h · {post.expiryAction === 'delete_permanently' ? 'Deletes' : 'Archives'}</span>}
       {post.localOnly && <span className="topic-badge">Local preview</span>}
       <span className="post-card__time">{post.timestamp}</span>
     </div>
-    {detailHref && !detailed ? <a className="post-link" href={detailHref}><p id={`post-${post.id}`} className="post-card__copy">{post.content}</p></a> : <p id={`post-${post.id}`} className="post-card__copy">{post.content}</p>}
+    {post.content && (detailHref && !detailed ? <a className="post-link" href={detailHref}><p id={`post-${post.id}`} className="post-card__copy">{post.content}</p></a> : <p id={`post-${post.id}`} className="post-card__copy">{post.content}</p>)}
+    {post.attachment && <img className="post-card__media" src={post.attachment.previewUrl} alt={post.attachment.altText ?? ''} />}
     <InteractionControls post={post} detailed={detailed} />
     <footer className="post-card__footer">
       {detailHref && !detailed ? <a className="comment-link" href={detailHref}><span aria-hidden="true">◯</span>{post.commentCount} {post.commentCount === 1 ? 'comment' : 'comments'}</a> : <span>{post.commentCount} {post.commentCount === 1 ? 'comment' : 'comments'}</span>}
