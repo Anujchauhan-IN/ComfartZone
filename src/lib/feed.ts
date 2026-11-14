@@ -26,7 +26,25 @@ export interface FeedPost {
     { key: PollChoice; label: string; count: number },
   ];
   reactions?: Record<Reaction, number>;
+  localOnly?: boolean;
 }
+
+export interface CommentFixture {
+  id: string;
+  content: string;
+  timestamp: string;
+  replies?: CommentFixture[];
+  localOnly?: boolean;
+}
+
+export interface NewPostInput {
+  type: PostType;
+  topic?: Topic;
+  content: string;
+}
+
+export const POST_LIMITS = { min: 20, max: 1000 } as const;
+export const COMMENT_LIMITS = { min: 1, max: 500 } as const;
 
 export const POST_TYPE_OPTIONS = [
   { value: 'all', label: 'All', shortLabel: 'Home' },
@@ -48,6 +66,21 @@ export const TOPIC_OPTIONS = [
   { value: 'internet-technology', label: 'Internet & technology' },
   { value: 'random', label: 'Random' },
 ] as const;
+
+export const POLL_CHOICES: Record<Exclude<PostType, 'confession'>, FeedPost['choices']> = {
+  petty_court: [
+    { key: 'guilty', label: 'Guilty', count: 0 },
+    { key: 'not_guilty', label: 'Not guilty', count: 0 },
+  ],
+  am_i_weird: [
+    { key: 'me_too', label: 'Me too', count: 0 },
+    { key: 'just_you', label: 'Just you', count: 0 },
+  ],
+  hot_take: [
+    { key: 'agree', label: 'Agree', count: 0 },
+    { key: 'disagree', label: 'Disagree', count: 0 },
+  ],
+};
 
 export const TYPE_LABELS: Record<PostType, string> = {
   confession: 'Confession',

@@ -22,6 +22,17 @@
 - [x] Add loading, empty and error-state components.
 - [x] Verify type checks, production build and homepage response.
 
+## Phase 1C — Post creation and post detail UI
+
+- [x] Add an accessible local-only composer with type, topic and content validation.
+- [x] Add local post previews without implying persistence.
+- [x] Add static fixture-backed post detail routes for all mock posts.
+- [x] Reuse interactive voting and reaction controls on feed and detail views.
+- [x] Add local-only comments, one-level replies and deletion of local entries.
+- [x] Link feed cards and comment counts to canonical prototype detail routes.
+- [x] Add detail navigation, copy-link feedback and prototype limitations.
+- [x] Verify type checks, production build, homepage and representative detail routes.
+
 ## Next phases
 
 Follow the phase gates in `README.md`. No later-phase feature should be represented as complete until its implementation and verification are recorded here.

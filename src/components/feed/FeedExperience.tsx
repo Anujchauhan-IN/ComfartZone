@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { MOCK_POSTS } from '../../lib/mockFeed';
-import type { FeedSort, PostType, Topic } from '../../lib/feed';
-import { POST_TYPE_OPTIONS, TOPIC_OPTIONS } from '../../lib/feed';
+import type { FeedPost, FeedSort, NewPostInput, PostType, Topic } from '../../lib/feed';
+import { POLL_CHOICES, POST_TYPE_OPTIONS, TOPIC_OPTIONS } from '../../lib/feed';
+import PostComposer from '../interactive/PostComposer';
 import PostCard from './PostCard';
 import { EmptyState, ErrorState, LoadingState } from './FeedStates';
 
@@ -29,9 +30,9 @@ export default function FeedExperience({ initialType, initialTopic, initialSort 
   const [topic, setTopic] = useState<TopicFilter>(() => validTopic(initialTopic ?? null));
   const [sort, setSort] = useState<FeedSort>(() => validSort(initialSort ?? null));
   const [composerOpen, setComposerOpen] = useState(false);
-  const [draft, setDraft] = useState('');
+  const [localPosts, setLocalPosts] = useState<FeedPost[]>([]);
+  const [notice, setNotice] = useState('');
   const [state, setState] = useState<'ready' | 'loading' | 'error'>('ready');
-  const closeButtonRef = useRef<HTMLButtonElement>(null);
   const composerTriggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -40,19 +41,6 @@ export default function FeedExperience({ initialType, initialTopic, initialSort 
     setTopic(validTopic(params.get('topic')));
     setSort(validSort(params.get('sort')));
   }, []);
-
-  useEffect(() => {
-    if (!composerOpen) return;
-    closeButtonRef.current?.focus();
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setComposerOpen(false);
-        composerTriggerRef.current?.focus();
-      }
-    };
-    window.addEventListener('keydown', closeOnEscape);
-    return () => window.removeEventListener('keydown', closeOnEscape);
-  }, [composerOpen]);
 
   useEffect(() => {
     if (state !== 'ready') return;
@@ -65,7 +53,7 @@ export default function FeedExperience({ initialType, initialTopic, initialSort 
   }, [type, topic, sort, state]);
 
   const posts = useMemo(() => {
-    const filtered = MOCK_POSTS.filter((post) =>
+    const filtered = [...localPosts, ...MOCK_POSTS].filter((post) =>
       (type === 'all' || post.type === type) && (topic === 'all' || post.topic === topic));
     return [...filtered].sort((a, b) => {
       if (sort === 'fresh') return a.ageMinutes - b.ageMinutes;
@@ -75,9 +63,18 @@ export default function FeedExperience({ initialType, initialTopic, initialSort 
       const controversy = (post: typeof a) => post.choices ? Math.min(post.choices[0].count, post.choices[1].count) : -1;
       return controversy(b) - controversy(a);
     }).filter((post) => sort !== 'controversial' || post.type !== 'confession');
-  }, [type, topic, sort]);
+  }, [type, topic, sort, localPosts]);
 
   const reset = () => { setType('all'); setTopic('all'); setSort('fresh'); setState('ready'); };
+  const addLocalPost = (input: NewPostInput) => {
+    const base = { id: `local-${Date.now()}`, ...input, timestamp: 'just now', ageMinutes: -1, commentCount: 0, localOnly: true };
+    const post: FeedPost = input.type === 'confession'
+      ? { ...base, reactions: { same: 0, ouch: 0, wild: 0 } }
+      : { ...base, choices: POLL_CHOICES[input.type] };
+    setLocalPosts((current) => [post, ...current]);
+    setType('all'); setTopic('all'); setSort('fresh');
+    setNotice('Local post preview added. It will disappear when this page reloads.');
+  };
 
   return (
     <>
@@ -116,24 +113,13 @@ export default function FeedExperience({ initialType, initialTopic, initialSort 
         <p className="mt-3 text-xs leading-5 text-ink-muted">Development fixtures only. Filters and interactions are local and reset on refresh.</p>
       </section>
 
+      <p className="sr-only" aria-live="polite">{notice}</p>
+      {notice && <p className="rounded-input border border-line bg-accent-soft px-3 py-2 text-xs leading-5">{notice}</p>}
       {state === 'loading' && <LoadingState />}
       {state === 'error' && <ErrorState onReset={reset} />}
       {state === 'ready' && (posts.length ? <div className="space-y-3" aria-live="polite">{posts.map((post) => <PostCard post={post} key={post.id} />)}</div> : <EmptyState onReset={reset} />)}
 
-      {composerOpen && (
-        <div className="dialog-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setComposerOpen(false); }}>
-          <section className="composer-dialog" role="dialog" aria-modal="true" aria-labelledby="prototype-composer-title">
-            <div className="flex items-start justify-between gap-4">
-              <div><p className="text-xs font-bold uppercase tracking-wider text-ink-muted">Prototype only</p><h2 id="prototype-composer-title" className="mt-1 text-xl font-extrabold">Spill it</h2></div>
-              <button ref={closeButtonRef} className="icon-button" type="button" aria-label="Close composer" onClick={() => { setComposerOpen(false); composerTriggerRef.current?.focus(); }}>×</button>
-            </div>
-            <label className="mt-5 block text-sm font-bold" htmlFor="demo-draft">What happened?</label>
-            <textarea id="demo-draft" className="mt-2 min-h-40 w-full resize-y rounded-input border border-line bg-surface p-3 leading-6" maxLength={1000} value={draft} onChange={(event) => setDraft(event.target.value)} />
-            <div className="mt-2 flex justify-between text-xs text-ink-muted"><span>Nothing is submitted or saved.</span><span>{draft.length} / 1000</span></div>
-            <div className="mt-5 flex justify-end gap-2"><button className="button-secondary" type="button" onClick={() => { setComposerOpen(false); composerTriggerRef.current?.focus(); }}>Cancel</button><button className="button-primary" type="button" onClick={() => { setComposerOpen(false); composerTriggerRef.current?.focus(); }}>Done</button></div>
-          </section>
-        </div>
-      )}
+      <PostComposer open={composerOpen} onClose={() => setComposerOpen(false)} onSubmit={addLocalPost} returnFocusRef={composerTriggerRef} />
     </>
   );
 }
