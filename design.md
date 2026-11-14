@@ -102,13 +102,13 @@ Max shell ~1240 px; left rail ~200–240 px, central feed ~580–680 px, optiona
 5. Post owner can manage their own content, including private archive/deletion controls; anonymous ownership never appears in public responses.
 
 **Formats:**
-- Regular: neutral warm accent; reactions and comments.
-- Confession: coral/blush; `Same`, `Ouch`, `Wild` reactions (final reaction taxonomy subject to product-spec approval).
-- Petty Court: muted amber; `Guilty` / `Not Guilty`.
-- Am I Weird?: lavender; `Me Too` / `Just You`.
-- Hot Take: muted teal; `Agree` / `Disagree`.
+- Regular: neutral warm accent; `Funny`, `Love`, `Annoying` reactions.
+- Confession: coral/blush; `Same`, `Ouch`, `Wild` reactions.
+- Petty Court: muted amber; `Guilty` / `Not Guilty` votes.
+- Am I Weird?: lavender; `Me Too` / `Just You` votes.
+- Hot Take: muted teal; `Agree` / `Disagree` votes.
 
-Keep one reusable card anatomy. One active reaction per user per post; one active vote per user per eligible poll. Selected states accessible; percentages and counts only from real data. `No votes yet` when empty. Do not make color the sole state signal.
+Keep one reusable card anatomy. A user may have one active format-valid reaction or vote per post and may change or remove it. Poll formats accept no additional reactions. Comments, one-level replies, sharing and reporting remain available on every format. Selected states accessible; percentages and counts only from real data. `No votes yet` when empty. Do not make color the sole state signal.
 
 ### C. Post detail (`/post/[id]`)
 
@@ -134,7 +134,7 @@ Keep one reusable card anatomy. One active reaction per user per post; one activ
 ### E. Comments
 
 - `Write a comment…`, maximum 256 grapheme clusters, clear Reply/Report/Delete controls.
-- One reply level; no recursive deep thread. **Text and emoji only**, pending further approval of comment media.
+- One reply level; no recursive deep thread. **Text and emoji only**; comment media is not included in the initial product.
 - Owner attribution follows chosen privacy rules; no private author identifiers. Prevent duplicate rapid submissions and give recoverable errors.
 - Empty: `No comments yet.` with optional invitation. Root deletion placeholder if live replies must remain.
 
