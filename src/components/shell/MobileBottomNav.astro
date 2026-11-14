@@ -1,17 +1,13 @@
 ---
 import { POST_TYPE_OPTIONS } from '../../lib/feed';
-const currentType = Astro.url.searchParams.get('type') ?? 'all';
+import NavIcon from './NavIcon.astro';
+const currentType = Astro.url.pathname.startsWith('/post/') ? '' : Astro.url.searchParams.get('type') ?? 'all';
+const icons = { all: 'home', confession: 'confession', petty_court: 'court', am_i_weird: 'weird', hot_take: 'takes' } as const;
 ---
-
 <nav class="mobile-bottom-nav lg:hidden" aria-label="Post types">
   {POST_TYPE_OPTIONS.map((item) => (
-    <a
-      class:list={["mobile-nav-link", { "mobile-nav-link--active": currentType === item.value }]}
-      href={item.value === 'all' ? '/' : '/?type=' + item.value}
-      aria-current={currentType === item.value ? 'page' : undefined}
-    >
-      <span class:list={["mobile-nav-dot", 'sidebar-dot--' + item.value]} aria-hidden="true"></span>
-      <span>{item.shortLabel}</span>
+    <a class:list={["mobile-nav-link", { "mobile-nav-link--active": currentType === item.value }]} href={item.value === 'all' ? '/' : '/?type=' + item.value} aria-current={currentType === item.value ? 'page' : undefined}>
+      <NavIcon name={icons[item.value]} /><span>{item.shortLabel}</span>
     </a>
   ))}
 </nav>

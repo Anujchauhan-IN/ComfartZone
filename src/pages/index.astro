@@ -2,34 +2,19 @@
 import FeedExperience from '../components/feed/FeedExperience';
 import DesktopSidebar from '../components/shell/DesktopSidebar.astro';
 import MobileBottomNav from '../components/shell/MobileBottomNav.astro';
+import RightRail from '../components/shell/RightRail.astro';
 import SiteHeader from '../components/shell/SiteHeader.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-
 const initialType = Astro.url.searchParams.get('type') ?? undefined;
 const initialTopic = Astro.url.searchParams.get('topic') ?? undefined;
 const initialSort = Astro.url.searchParams.get('sort') ?? undefined;
 ---
-
 <BaseLayout>
   <SiteHeader />
-  <main id="main-content" class="mx-auto grid max-w-[var(--content-shell)] gap-5 px-3 py-4 pb-24 sm:px-4 md:px-6 md:py-6 lg:grid-cols-[13rem_minmax(0,var(--content-feed))] lg:justify-center lg:pb-8 xl:grid-cols-[13rem_minmax(0,var(--content-feed))_15rem]">
+  <main id="main-content" class="page-shell">
     <DesktopSidebar />
-    <div class="min-w-0 space-y-3">
-      <FeedExperience {initialType} {initialTopic} {initialSort} client:load />
-    </div>
-    <aside class="hidden xl:block" aria-labelledby="principles-heading">
-      <div class="sticky top-6 space-y-4">
-        <section class="surface p-4">
-          <h2 id="principles-heading" class="text-sm font-extrabold">House rules, briefly</h2>
-          <ul class="mt-3 space-y-3 text-sm leading-5 text-ink-muted">
-            <li>Be funny without being cruel.</li>
-            <li>Keep private information private.</li>
-            <li>Disagreement is allowed. Harassment is not.</li>
-          </ul>
-        </section>
-        <p class="px-2 text-xs leading-5 text-ink-muted">This Phase 1B feed uses clearly labelled development fixtures. Nothing here is persisted.</p>
-      </div>
-    </aside>
+    <div class="feed-column"><FeedExperience {initialType} {initialTopic} {initialSort} client:load /></div>
+    <RightRail />
   </main>
   <MobileBottomNav />
 </BaseLayout>

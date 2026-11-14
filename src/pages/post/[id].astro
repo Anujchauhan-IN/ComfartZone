@@ -1,23 +1,23 @@
 ---
 import PostDetailExperience from '../../components/post/PostDetailExperience';
+import DesktopSidebar from '../../components/shell/DesktopSidebar.astro';
 import MobileBottomNav from '../../components/shell/MobileBottomNav.astro';
+import RightRail from '../../components/shell/RightRail.astro';
 import SiteHeader from '../../components/shell/SiteHeader.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { MOCK_COMMENTS } from '../../lib/mockComments';
 import { MOCK_POSTS } from '../../lib/mockFeed';
 import { TYPE_LABELS } from '../../lib/feed';
-
-export function getStaticPaths() {
-  return MOCK_POSTS.map((post) => ({ params: { id: post.id }, props: { post } }));
-}
+export function getStaticPaths() { return MOCK_POSTS.map((post) => ({ params: { id: post.id }, props: { post } })); }
 const { post } = Astro.props;
 const comments = MOCK_COMMENTS[post.id] ?? [];
 ---
-
 <BaseLayout title={TYPE_LABELS[post.type]} description={post.content.slice(0, 150)}>
   <SiteHeader />
-  <main id="main-content" class="mx-auto max-w-[var(--content-feed)] px-3 py-4 pb-24 sm:px-4 md:px-6 md:py-6 lg:pb-10">
-    <PostDetailExperience {post} {comments} client:load />
+  <main id="main-content" class="page-shell">
+    <DesktopSidebar />
+    <div class="feed-column"><PostDetailExperience {post} {comments} client:load /></div>
+    <RightRail />
   </main>
   <MobileBottomNav />
 </BaseLayout>

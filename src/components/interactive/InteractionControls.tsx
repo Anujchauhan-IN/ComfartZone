@@ -20,8 +20,8 @@ export function BinaryVote({ post, detailed = false }: Props) {
   const percentages = roundedPercentages(counts[0], counts[1]);
 
   return (
-    <div className={detailed ? 'mt-5' : 'mt-4'}>
-      <div className="grid grid-cols-2 gap-2" aria-label={`Local prototype vote for ${TYPE_LABELS[post.type]}`}>
+    <div className={`interaction-block interaction-block--${post.type} ${detailed ? 'interaction-block--detail' : ''}`}>
+      <div className="vote-grid" aria-label={`Local prototype vote for ${TYPE_LABELS[post.type]}`}>
         {choices.map((choice, index) => (
           <button className="vote-button" type="button" aria-pressed={selected === choice.key}
             onClick={() => setSelected((current) => current === choice.key ? null : choice.key)} key={choice.key}>
@@ -30,11 +30,11 @@ export function BinaryVote({ post, detailed = false }: Props) {
         ))}
       </div>
       {selected && (
-        <div className="mt-3 space-y-2" aria-label="Local prototype vote results">
+        <div className="vote-results" aria-label="Local prototype vote results">
           {choices.map((choice, index) => (
             <div key={choice.key}>
               <div className="flex justify-between text-xs text-ink-muted"><span>{choice.label}</span><span>{percentages[index]}%</span></div>
-              <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-surface-muted"><div className="h-full rounded-full bg-accent" style={{ width: `${percentages[index]}%` }} /></div>
+              <div className="vote-track"><div className="vote-fill" style={{ width: `${percentages[index]}%` }} /></div>
             </div>
           ))}
         </div>
@@ -48,7 +48,7 @@ export function ConfessionReactions({ post, detailed = false }: Props) {
   const [selected, setSelected] = useState<Reaction | null>(null);
   if (!post.reactions) return null;
   return (
-    <div className={`flex flex-wrap gap-2 ${detailed ? 'mt-5' : 'mt-4'}`} aria-label="Local prototype reactions">
+    <div className={`reaction-row interaction-block--${post.type} ${detailed ? 'interaction-block--detail' : ''}`} aria-label="Local prototype reactions">
       {(Object.keys(reactionLabels) as Reaction[]).map((reaction) => (
         <button className="reaction-button" type="button" aria-pressed={selected === reaction}
           onClick={() => setSelected((current) => current === reaction ? null : reaction)} key={reaction}>

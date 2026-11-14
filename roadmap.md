@@ -33,6 +33,17 @@
 - [x] Add detail navigation, copy-link feedback and prototype limitations.
 - [x] Verify type checks, production build, homepage and representative detail routes.
 
+## Phase 1D — Visual design refinement
+
+- [x] Compare the existing interface against both approved reference images.
+- [x] Refine mobile and desktop shells with compact navigation and balanced rails.
+- [x] Strengthen the ComfartZone wordmark, CZ details and existing mascot treatment.
+- [x] Restyle the composer, filters, feed cards, interactions and prototype states.
+- [x] Apply consistent visual hierarchy to post details and comments.
+- [x] Preserve Phase 1B and 1C filtering, posting, voting and comment behavior.
+- [x] Verify type checks, production build and representative routes.
+- [ ] Complete screenshot-based browser review at 360, 390, 768 and 1440 px on a browser-capable environment.
+
 ## Next phases
 
 Follow the phase gates in `README.md`. No later-phase feature should be represented as complete until its implementation and verification are recorded here.

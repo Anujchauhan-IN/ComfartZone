@@ -1,24 +1,27 @@
 ---
 import { POST_TYPE_OPTIONS } from '../../lib/feed';
-const currentType = Astro.url.searchParams.get('type') ?? 'all';
+import NavIcon from './NavIcon.astro';
+const currentType = Astro.url.pathname.startsWith('/post/') ? '' : Astro.url.searchParams.get('type') ?? 'all';
+const icons = { all: 'home', confession: 'confession', petty_court: 'court', am_i_weird: 'weird', hot_take: 'takes' } as const;
 ---
-
-<aside class="hidden lg:block" aria-label="Primary navigation">
-  <nav class="sticky top-6 space-y-2">
-    <p class="px-3 text-xs font-bold uppercase tracking-[0.14em] text-ink-muted">Browse</p>
-    {POST_TYPE_OPTIONS.map((item) => (
-      <a
-        class:list={["sidebar-link", { "sidebar-link--active": currentType === item.value }]}
-        href={item.value === 'all' ? '/' : '/?type=' + item.value}
-        aria-current={currentType === item.value ? 'page' : undefined}
-      >
-        <span class:list={["sidebar-dot", 'sidebar-dot--' + item.value]} aria-hidden="true"></span>
-        {item.label}
-      </a>
-    ))}
-    <section class="surface mt-5 p-4">
-      <h2 class="text-sm font-extrabold">No names. No follower counts.</h2>
-      <p class="mt-2 text-xs leading-5 text-ink-muted">Just stories, tiny disputes and opinions that absolutely could have stayed private.</p>
-    </section>
+<aside class="desktop-sidebar hidden lg:block" aria-label="Primary navigation">
+  <nav class="sticky top-5">
+    <p class="eyebrow px-3">Browse the mess</p>
+    <div class="mt-2 space-y-1">
+      {POST_TYPE_OPTIONS.map((item) => (
+        <a class:list={["sidebar-link", { "sidebar-link--active": currentType === item.value }]} href={item.value === 'all' ? '/' : '/?type=' + item.value} aria-current={currentType === item.value ? 'page' : undefined}>
+          <NavIcon name={icons[item.value]} /><span>{item.label}</span>
+        </a>
+      ))}
+    </div>
+    <div class="sidebar-divider"></div>
+    <p class="eyebrow px-3">Quick topics</p>
+    <div class="mt-2 space-y-1 text-sm">
+      <a class="sidebar-topic" href="/?topic=relationships">Relationships</a>
+      <a class="sidebar-topic" href="/?topic=work">Work</a>
+      <a class="sidebar-topic" href="/?topic=social-awkwardness">Social awkwardness</a>
+      <a class="sidebar-topic" href="/?topic=everyday-life">Everyday life</a>
+    </div>
+    <section class="sidebar-note"><strong>No names. No follower counts.</strong><span>Just stories and opinions that could have stayed private.</span></section>
   </nav>
 </aside>
