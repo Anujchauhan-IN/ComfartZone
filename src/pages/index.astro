@@ -1,0 +1,32 @@
+---
+import ComposerPrompt from '../components/home/ComposerPrompt.astro';
+import FoundationState from '../components/home/FoundationState.astro';
+import TypeOverview from '../components/home/TypeOverview.astro';
+import DesktopSidebar from '../components/shell/DesktopSidebar.astro';
+import SiteHeader from '../components/shell/SiteHeader.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout>
+  <SiteHeader />
+  <main id="main-content" class="mx-auto grid max-w-[var(--content-shell)] gap-5 px-3 py-4 sm:px-4 md:px-6 md:py-6 lg:grid-cols-[13rem_minmax(0,var(--content-feed))] lg:justify-center xl:grid-cols-[13rem_minmax(0,var(--content-feed))_15rem]">
+    <DesktopSidebar />
+
+    <div class="min-w-0 space-y-4">
+      <ComposerPrompt />
+      <TypeOverview />
+      <FoundationState />
+    </div>
+
+    <aside class="hidden xl:block" aria-labelledby="principles-heading">
+      <section class="surface sticky top-6 p-4">
+        <h2 id="principles-heading" class="text-sm font-extrabold">House rules, briefly</h2>
+        <ul class="mt-3 space-y-3 text-sm leading-5 text-ink-muted">
+          <li>Be funny without being cruel.</li>
+          <li>Keep private information private.</li>
+          <li>Disagreement is allowed. Harassment is not.</li>
+        </ul>
+      </section>
+    </aside>
+  </main>
+</BaseLayout>

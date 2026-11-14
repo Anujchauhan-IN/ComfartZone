@@ -1,0 +1,135 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light;
+  --bg: #faf7f2;
+  --surface: #ffffff;
+  --surface-muted: #f5efe9;
+  --text: #302a28;
+  --text-muted: #756d68;
+  --accent: #ef7868;
+  --accent-hover: #de6556;
+  --accent-soft: #fff0e8;
+  --border: #e9e2db;
+  --focus: #9b4539;
+  --danger: #b64242;
+
+  --type-confession: #ef7868;
+  --type-court: #b57a34;
+  --type-weird: #7765a8;
+  --type-take: #347d78;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+
+  --radius-input: 0.75rem;
+  --radius-card: 1rem;
+  --radius-dialog: 1.25rem;
+  --border-width: 1px;
+  --content-feed: 42.5rem;
+  --content-shell: 77.5rem;
+}
+
+@theme inline {
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  --color-page: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-ink: var(--text);
+  --color-ink-muted: var(--text-muted);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+  --color-line: var(--border);
+  --color-focus: var(--focus);
+  --color-danger: var(--danger);
+
+  --radius-input: var(--radius-input);
+  --radius-card: var(--radius-card);
+  --radius-dialog: var(--radius-dialog);
+
+  --breakpoint-xs: 20rem;
+  --breakpoint-sm: 26.875rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 90rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 20rem;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  text-rendering: optimizeLegibility;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background:
+    radial-gradient(circle at top right, rgb(239 120 104 / 8%), transparent 24rem),
+    var(--bg);
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+.skip-link {
+  position: fixed;
+  z-index: 50;
+  top: var(--space-3);
+  left: var(--space-3);
+  translate: 0 -200%;
+  border-radius: var(--radius-input);
+  background: var(--text);
+  color: var(--surface);
+  padding: var(--space-2) var(--space-3);
+  font-weight: 700;
+}
+
+.skip-link:focus {
+  translate: 0;
+}
+
+.surface {
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .skip-link {
+    transition: translate 150ms ease;
+  }
+}

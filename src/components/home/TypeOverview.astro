@@ -1,0 +1,20 @@
+---
+const types = [
+  { name: 'Confessions', color: 'var(--type-confession)' },
+  { name: 'Petty Court', color: 'var(--type-court)' },
+  { name: 'Am I Weird?', color: 'var(--type-weird)' },
+  { name: 'Hot Takes', color: 'var(--type-take)' },
+];
+---
+
+<section class="surface p-4" aria-labelledby="type-heading">
+  <h2 id="type-heading" class="text-sm font-extrabold">Four ways to make it everyone else's problem</h2>
+  <ul class="mt-3 flex flex-wrap gap-2" aria-label="Planned post types">
+    {types.map((type) => (
+      <li class="inline-flex min-h-9 items-center gap-2 rounded-full border border-line bg-surface-muted px-3 text-sm font-bold">
+        <span class="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: type.color }} aria-hidden="true"></span>
+        {type.name}
+      </li>
+    ))}
+  </ul>
+</section>
