@@ -1,13 +1,24 @@
-<aside class="hidden lg:block" aria-label="Site overview">
-  <div class="sticky top-6 space-y-4">
-    <section class="surface p-4">
-      <h2 class="text-sm font-extrabold">A place for</h2>
-      <ul class="mt-3 space-y-2 text-sm text-ink-muted">
-        <li>Confessions</li>
-        <li>Petty disputes</li>
-        <li>Unusual habits</li>
-        <li>Everyday hot takes</li>
-      </ul>
+---
+import { POST_TYPE_OPTIONS } from '../../lib/feed';
+const currentType = Astro.url.searchParams.get('type') ?? 'all';
+---
+
+<aside class="hidden lg:block" aria-label="Primary navigation">
+  <nav class="sticky top-6 space-y-2">
+    <p class="px-3 text-xs font-bold uppercase tracking-[0.14em] text-ink-muted">Browse</p>
+    {POST_TYPE_OPTIONS.map((item) => (
+      <a
+        class:list={["sidebar-link", { "sidebar-link--active": currentType === item.value }]}
+        href={item.value === 'all' ? '/' : '/?type=' + item.value}
+        aria-current={currentType === item.value ? 'page' : undefined}
+      >
+        <span class:list={["sidebar-dot", 'sidebar-dot--' + item.value]} aria-hidden="true"></span>
+        {item.label}
+      </a>
+    ))}
+    <section class="surface mt-5 p-4">
+      <h2 class="text-sm font-extrabold">No names. No follower counts.</h2>
+      <p class="mt-2 text-xs leading-5 text-ink-muted">Just stories, tiny disputes and opinions that absolutely could have stayed private.</p>
     </section>
-  </div>
+  </nav>
 </aside>

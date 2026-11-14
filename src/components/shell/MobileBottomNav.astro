@@ -1,0 +1,17 @@
+---
+import { POST_TYPE_OPTIONS } from '../../lib/feed';
+const currentType = Astro.url.searchParams.get('type') ?? 'all';
+---
+
+<nav class="mobile-bottom-nav lg:hidden" aria-label="Post types">
+  {POST_TYPE_OPTIONS.map((item) => (
+    <a
+      class:list={["mobile-nav-link", { "mobile-nav-link--active": currentType === item.value }]}
+      href={item.value === 'all' ? '/' : '/?type=' + item.value}
+      aria-current={currentType === item.value ? 'page' : undefined}
+    >
+      <span class:list={["mobile-nav-dot", 'sidebar-dot--' + item.value]} aria-hidden="true"></span>
+      <span>{item.shortLabel}</span>
+    </a>
+  ))}
+</nav>

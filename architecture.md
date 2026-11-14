@@ -1,8 +1,8 @@
 # ComfartZone architecture
 
-## Phase 0 foundation
+## Phase 1A foundation
 
-ComfartZone uses Astro with strict TypeScript as the server-rendered application shell. React is registered for future interactive islands only; Phase 0 does not hydrate any client-side component. Tailwind CSS v4 is connected through its first-party Vite plugin and a single global stylesheet.
+ComfartZone uses Astro with strict TypeScript as the server-rendered application shell. React is registered for future interactive islands only; Phase 1A does not hydrate any client-side component. Tailwind CSS v4 is connected through its first-party Vite plugin and a single global stylesheet.
 
 ## Boundaries
 
@@ -25,4 +25,4 @@ The approved values from `design.md` are CSS custom properties in `src/styles/gl
 
 ## Current limitations
 
-Phase 0 contains no database, persisted feed, authentication, voting, comments, reporting or moderation. Deployment adapter selection is deferred until the hosting/runtime environment is verified.
+Phase 1A contains no database, persisted feed, authentication, voting, comments, reporting or moderation. Deployment adapter selection is deferred until the hosting/runtime environment is verified.
