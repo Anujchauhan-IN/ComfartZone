@@ -17,6 +17,7 @@ const pageTitle = title === SITE_NAME ? title : `${title} | ${SITE_NAME}`;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
+    <meta name="theme-color" content="#fff9f2" />
     <meta name="generator" content={Astro.generator} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{pageTitle}</title>
@@ -24,5 +25,30 @@ const pageTitle = title === SITE_NAME ? title : `${title} | ${SITE_NAME}`;
   <body>
     <a class="skip-link" href="#main-content">Skip to content</a>
     <slot />
+    <script>
+      const feedTypes = new Set(['all', 'confession', 'petty_court', 'am_i_weird', 'hot_take']);
+      const syncFeedNavigation = () => {
+        const onFeed = window.location.pathname === '/';
+        const requested = new URLSearchParams(window.location.search).get('type') ?? 'all';
+        const activeType = onFeed && feedTypes.has(requested) ? requested : '';
+        document.querySelectorAll<HTMLElement>('[data-feed-type]').forEach((link) => {
+          const active = link.dataset.feedType === activeType;
+          link.classList.toggle('sidebar-link--active', active && link.classList.contains('sidebar-link'));
+          link.classList.toggle('mobile-nav-link--active', active && link.classList.contains('mobile-nav-link'));
+          if (active) link.setAttribute('aria-current', 'page');
+          else link.removeAttribute('aria-current');
+        });
+      };
+      syncFeedNavigation();
+      window.addEventListener('popstate', syncFeedNavigation);
+      window.addEventListener('cz:querychange', syncFeedNavigation);
+      document.addEventListener('click', (event) => {
+        const target = event.target instanceof Element ? event.target.closest<HTMLAnchorElement>('[data-feed-type]') : null;
+        if (!target || window.location.pathname !== '/' || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        event.preventDefault();
+        window.history.pushState({}, '', target.href);
+        window.dispatchEvent(new Event('cz:querychange'));
+      });
+    </script>
   </body>
 </html>

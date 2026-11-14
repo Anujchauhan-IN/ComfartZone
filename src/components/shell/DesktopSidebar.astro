@@ -1,7 +1,6 @@
 ---
 import { POST_TYPE_OPTIONS } from '../../lib/feed';
 import NavIcon from './NavIcon.astro';
-const currentType = Astro.url.pathname.startsWith('/post/') ? '' : Astro.url.searchParams.get('type') ?? 'all';
 const icons = { all: 'home', confession: 'confession', petty_court: 'court', am_i_weird: 'weird', hot_take: 'takes' } as const;
 ---
 <aside class="desktop-sidebar hidden lg:block" aria-label="Primary navigation">
@@ -9,7 +8,7 @@ const icons = { all: 'home', confession: 'confession', petty_court: 'court', am_
     <p class="eyebrow px-3">Browse the mess</p>
     <div class="mt-2 space-y-1">
       {POST_TYPE_OPTIONS.map((item) => (
-        <a class:list={["sidebar-link", { "sidebar-link--active": currentType === item.value }]} href={item.value === 'all' ? '/' : '/?type=' + item.value} aria-current={currentType === item.value ? 'page' : undefined}>
+        <a class="sidebar-link" data-feed-type={item.value} href={item.value === 'all' ? '/' : '/?type=' + item.value}>
           <NavIcon name={icons[item.value]} /><span>{item.label}</span>
         </a>
       ))}

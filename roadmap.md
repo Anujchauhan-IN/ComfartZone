@@ -42,6 +42,10 @@
 - [x] Apply consistent visual hierarchy to post details and comments.
 - [x] Preserve Phase 1B and 1C filtering, posting, voting and comment behavior.
 - [x] Verify type checks, production build and representative routes.
+- [x] Remove duplicate mobile/tablet type navigation and compact the mobile feed header.
+- [x] Synchronize query state, navigation, direct URLs and browser history in static output.
+- [x] Consolidate development notices while preserving local-only interaction clarity.
+- [x] Refine compact cards and the keyboard-safe composer sheet.
 - [ ] Complete screenshot-based browser review at 360, 390, 768 and 1440 px on a browser-capable environment.
 
 ## Next phases

@@ -5,15 +5,12 @@ import MobileBottomNav from '../components/shell/MobileBottomNav.astro';
 import RightRail from '../components/shell/RightRail.astro';
 import SiteHeader from '../components/shell/SiteHeader.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-const initialType = Astro.url.searchParams.get('type') ?? undefined;
-const initialTopic = Astro.url.searchParams.get('topic') ?? undefined;
-const initialSort = Astro.url.searchParams.get('sort') ?? undefined;
 ---
 <BaseLayout>
   <SiteHeader />
   <main id="main-content" class="page-shell">
     <DesktopSidebar />
-    <div class="feed-column"><FeedExperience {initialType} {initialTopic} {initialSort} client:load /></div>
+    <div class="feed-column"><FeedExperience client:load /></div>
     <RightRail />
   </main>
   <MobileBottomNav />

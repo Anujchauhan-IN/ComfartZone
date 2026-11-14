@@ -16,7 +16,6 @@ export default function PostCard({ post, detailed = false }: Props) {
     <InteractionControls post={post} detailed={detailed} />
     <footer className="post-card__footer">
       {detailHref && !detailed ? <a className="comment-link" href={detailHref}><span aria-hidden="true">◯</span>{post.commentCount} {post.commentCount === 1 ? 'comment' : 'comments'}</a> : <span>{post.commentCount} {post.commentCount === 1 ? 'comment' : 'comments'}</span>}
-      <span className="prototype-note">Local demo · resets on refresh</span>
     </footer>
   </article>;
 }

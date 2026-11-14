@@ -21,7 +21,7 @@ export function BinaryVote({ post, detailed = false }: Props) {
 
   return (
     <div className={`interaction-block interaction-block--${post.type} ${detailed ? 'interaction-block--detail' : ''}`}>
-      <div className="vote-grid" aria-label={`Local prototype vote for ${TYPE_LABELS[post.type]}`}>
+      <div className="vote-grid" aria-label={`Vote on ${TYPE_LABELS[post.type]}`}>
         {choices.map((choice, index) => (
           <button className="vote-button" type="button" aria-pressed={selected === choice.key}
             onClick={() => setSelected((current) => current === choice.key ? null : choice.key)} key={choice.key}>
@@ -30,7 +30,7 @@ export function BinaryVote({ post, detailed = false }: Props) {
         ))}
       </div>
       {selected && (
-        <div className="vote-results" aria-label="Local prototype vote results">
+        <div className="vote-results" aria-label="Vote results">
           {choices.map((choice, index) => (
             <div key={choice.key}>
               <div className="flex justify-between text-xs text-ink-muted"><span>{choice.label}</span><span>{percentages[index]}%</span></div>
@@ -39,7 +39,7 @@ export function BinaryVote({ post, detailed = false }: Props) {
           ))}
         </div>
       )}
-      <p className="sr-only" aria-live="polite">{selected ? 'Local demo choice selected. It resets on reload.' : 'No local demo choice selected.'}</p>
+      <p className="sr-only" aria-live="polite">{selected ? `${choices.find((choice) => choice.key === selected)?.label} selected` : 'No choice selected'}</p>
     </div>
   );
 }
@@ -48,14 +48,14 @@ export function ConfessionReactions({ post, detailed = false }: Props) {
   const [selected, setSelected] = useState<Reaction | null>(null);
   if (!post.reactions) return null;
   return (
-    <div className={`reaction-row interaction-block--${post.type} ${detailed ? 'interaction-block--detail' : ''}`} aria-label="Local prototype reactions">
+    <div className={`reaction-row interaction-block--${post.type} ${detailed ? 'interaction-block--detail' : ''}`} aria-label="Reactions">
       {(Object.keys(reactionLabels) as Reaction[]).map((reaction) => (
         <button className="reaction-button" type="button" aria-pressed={selected === reaction}
           onClick={() => setSelected((current) => current === reaction ? null : reaction)} key={reaction}>
           {reactionLabels[reaction]} <span className="font-normal">{post.reactions![reaction] + (selected === reaction ? 1 : 0)}</span>
         </button>
       ))}
-      <p className="sr-only" aria-live="polite">{selected ? 'Local demo reaction selected. It resets on reload.' : 'No local demo reaction selected.'}</p>
+      <p className="sr-only" aria-live="polite">{selected ? `${reactionLabels[selected]} selected` : 'No reaction selected'}</p>
     </div>
   );
 }

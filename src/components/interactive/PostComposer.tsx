@@ -53,6 +53,13 @@ export default function PostComposer({ open, onClose, onSubmit, returnFocusRef }
     return () => { window.removeEventListener('keydown', handleKeyDown); document.body.style.overflow = ''; };
   }, [open]);
 
+  useEffect(() => {
+    if (!open || !content.trim()) return;
+    const warnBeforeUnload = (event: BeforeUnloadEvent) => event.preventDefault();
+    window.addEventListener('beforeunload', warnBeforeUnload);
+    return () => window.removeEventListener('beforeunload', warnBeforeUnload);
+  }, [open, content]);
+
   if (!open) return null;
   const submit = (event: SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -67,7 +74,7 @@ export default function PostComposer({ open, onClose, onSubmit, returnFocusRef }
     <div className="dialog-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) requestClose(); }}>
       <section ref={dialogRef} className="composer-dialog" role="dialog" aria-modal="true" aria-labelledby={titleId} aria-describedby={descriptionId}>
         <div className="composer-dialog__header">
-          <div><p className="eyebrow">Local prototype</p><h2 id={titleId}>Spill it</h2></div>
+          <div><p className="eyebrow">New post</p><h2 id={titleId}>Spill it</h2></div>
           <button ref={closeRef} className="icon-button" type="button" aria-label="Close composer" onClick={requestClose}>×</button>
         </div>
         <p id={descriptionId} className="composer-dialog__description">Your post is added to this tab only and disappears on refresh.</p>
@@ -79,12 +86,12 @@ export default function PostComposer({ open, onClose, onSubmit, returnFocusRef }
               ))}
             </div>
           </fieldset>
-          <label className="field-label">Topic (optional)<select className="field-control" value={topic} onChange={(event) => setTopic(event.target.value as Topic | 'none')}>
+          <label className="field-label">Topic (optional)<select name="post-topic" autoComplete="off" className="field-control" value={topic} onChange={(event) => setTopic(event.target.value as Topic | 'none')}>
             <option value="none">No topic</option>{TOPIC_OPTIONS.filter((option) => option.value !== 'all').map((option) => <option value={option.value} key={option.value}>{option.label}</option>)}
           </select></label>
           <div><label className="text-sm font-extrabold" htmlFor="post-content">What happened?</label>
-            <textarea id="post-content" className="composer-textarea" maxLength={POST_LIMITS.max} value={content} onChange={(event) => setContent(event.target.value)} aria-invalid={(submitted || content.length > 0) && !valid} aria-describedby="post-validation post-counter" />
-            <div className="mt-2 flex items-start justify-between gap-3 text-xs"><span id="post-validation" className={content.length > 0 && !valid ? 'text-danger' : 'text-ink-muted'}>{content.length > 0 && !valid ? `${Math.max(0, POST_LIMITS.min - trimmedLength)} more characters needed.` : 'Plain text only. Nothing is permanently saved.'}</span><span id="post-counter" className="shrink-0 text-ink-muted">{content.length} / {POST_LIMITS.max}</span></div>
+            <textarea id="post-content" name="post-content" autoComplete="off" placeholder="Tell us what happened…" className="composer-textarea" maxLength={POST_LIMITS.max} value={content} onChange={(event) => setContent(event.target.value)} aria-invalid={(submitted || content.length > 0) && !valid} aria-describedby="post-validation post-counter" />
+            <div className="mt-2 flex items-start justify-between gap-3 text-xs"><span id="post-validation" className={content.length > 0 && !valid ? 'text-danger' : 'text-ink-muted'}>{content.length > 0 && !valid ? `${Math.max(0, POST_LIMITS.min - trimmedLength)} more characters needed.` : 'Plain text, 20–1,000 characters.'}</span><span id="post-counter" className="shrink-0 text-ink-muted">{content.length} / {POST_LIMITS.max}</span></div>
           </div>
           <div className="flex justify-end gap-2"><button className="button-secondary" type="button" onClick={requestClose}>Cancel</button><button className="button-primary" type="submit" disabled={!valid}>Add local preview</button></div>
         </form>
