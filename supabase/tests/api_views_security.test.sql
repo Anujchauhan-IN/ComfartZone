@@ -41,11 +41,20 @@ insert into app.posts (
   ('71000000-0000-4000-8000-000000000001', 'regular', 'Attributed post with retired metadata', '75555555-5555-4555-8555-555555555552', 'attributed', '7aaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa1', 'active', statement_timestamp(), null, null),
   ('71000000-0000-4000-8000-000000000002', 'regular', 'Anonymous post', '75555555-5555-4555-8555-555555555551', 'anonymous', null, 'active', statement_timestamp(), null, null),
   ('72000000-0000-4000-8000-000000000003', 'regular', 'Attributed post with active metadata', '75555555-5555-4555-8555-555555555551', 'attributed', '7bbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb2', 'active', statement_timestamp(), null, null),
-  ('72000000-0000-4000-8000-000000000004', 'regular', 'Expired post', null, 'attributed', '7bbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb2', 'active', statement_timestamp() - interval '25 hours', statement_timestamp() - interval '1 hour', 'archive_private'),
+  ('72000000-0000-4000-8000-000000000004', 'regular', 'Expiring post', null, 'attributed', '7bbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb2', 'active', statement_timestamp() - interval '24 hours' + interval '5 seconds', statement_timestamp() + interval '5 seconds', 'archive_private'),
   ('72000000-0000-4000-8000-000000000005', 'regular', 'Post entering deletion', null, 'attributed', '7bbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb2', 'active', statement_timestamp(), null, null),
   ('72000000-0000-4000-8000-000000000006', 'confession', 'Post entering moderation removal', null, 'attributed', '7bbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb2', 'active', statement_timestamp(), null, null),
   ('72000000-0000-4000-8000-000000000007', 'regular', 'Post for comment presentation', null, 'attributed', '7bbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb2', 'active', statement_timestamp(), null, null),
   ('72000000-0000-4000-8000-000000000008', 'petty_court', 'Post for vote aggregation', null, 'attributed', '7bbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb2', 'active', statement_timestamp(), null, null);
+
+-- Create the historical comment while its parent is still unexpired. Later
+-- assertions run after the exact expiry boundary without disabling triggers.
+insert into app.comments (
+  comment_id, post_id, public_author_profile_id, body
+) values (
+  '73000000-0000-4000-8000-000000000008', '72000000-0000-4000-8000-000000000004',
+  '7bbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb2', 'Historical comment on expired post'
+);
 
 insert into private.post_owners (post_id, owner_user_id) values
   ('71000000-0000-4000-8000-000000000001', '71111111-1111-4111-8111-111111111111'),
@@ -71,16 +80,6 @@ insert into app.comments (
   ('73000000-0000-4000-8000-000000000005', '72000000-0000-4000-8000-000000000007', '7ccccccc-cccc-4ccc-8ccc-ccccccccccc3', 'Comment from deleted account'),
   ('73000000-0000-4000-8000-000000000006', '72000000-0000-4000-8000-000000000007', '7bbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb2', 'Comment becoming deleted'),
   ('73000000-0000-4000-8000-000000000007', '72000000-0000-4000-8000-000000000007', '7bbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb2', 'Comment becoming moderated');
-
--- Represent a comment that was valid before its parent post expired.
-alter table app.comments disable trigger comments_parent_invariant;
-insert into app.comments (
-  comment_id, post_id, public_author_profile_id, body
-) values (
-  '73000000-0000-4000-8000-000000000008', '72000000-0000-4000-8000-000000000004',
-  '7bbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb2', 'Historical comment on expired post'
-);
-alter table app.comments enable trigger comments_parent_invariant;
 
 insert into private.comment_owners (comment_id, owner_user_id) values
   ('73000000-0000-4000-8000-000000000001', '71111111-1111-4111-8111-111111111111'),
@@ -108,6 +107,20 @@ insert into private.post_reactions (post_id, user_id, reaction) values
 insert into private.post_votes (post_id, user_id, choice) values
   ('72000000-0000-4000-8000-000000000008', '71111111-1111-4111-8111-111111111111', 'guilty'),
   ('72000000-0000-4000-8000-000000000008', '72222222-2222-4222-8222-222222222222', 'not_guilty');
+
+-- API visibility uses statement_timestamp(), which advances between statements.
+-- Wait only until this fixture's immutable expiry boundary has passed.
+do $fixture$
+declare
+  target_expiry timestamptz;
+begin
+  select expires_at into strict target_expiry
+  from app.posts
+  where post_id = '72000000-0000-4000-8000-000000000004';
+
+  perform pg_sleep_until(target_expiry + interval '10 milliseconds');
+end
+$fixture$;
 
 -- Exact API surface and grants.
 select set_eq(
